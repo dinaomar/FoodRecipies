@@ -2,14 +2,14 @@ package com.dina.elcg.myreciepes.ui.viewmodels
 
 import android.app.Application
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.dina.elcg.myreciepes.data.Repository
+import com.dina.elcg.myreciepes.data.database.RecipesEntity
 import com.dina.elcg.myreciepes.model.FoodRecipe
 import com.dina.elcg.myreciepes.util.InternetUtil
 import com.dina.elcg.myreciepes.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.lang.Exception
@@ -22,6 +22,7 @@ class MainViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipe>> = MutableLiveData()
+    val readRecipes: LiveData<List<RecipesEntity>> = repository.local.readDatabase().asLiveData()
 
     fun getRecipes(queries: Map<String, String>) {
         viewModelScope.launch {
@@ -34,6 +35,10 @@ class MainViewModel @Inject constructor(
             try {
                 val response = repository.remote.getRecipes(queries)
                 recipesResponse.value = handleRecipesResponse(response)
+
+                val foodRecipes = recipesResponse.value!!.data
+                if (foodRecipes != null)
+                    offlineCacheRecipes(foodRecipes)
             } catch (e: Exception) {
                 recipesResponse.value = NetworkResult.Error("No recipes found!!")
             }
@@ -55,6 +60,17 @@ class MainViewModel @Inject constructor(
                 return NetworkResult.Success(foodRecipes!!)
             }
             else -> return NetworkResult.Error(response.message())
+        }
+    }
+
+    private fun offlineCacheRecipes(foodRecipe: FoodRecipe) {
+        val recipesEntity = RecipesEntity(foodRecipe)
+        insertRecipes(recipesEntity)
+    }
+
+    private fun insertRecipes(recipesEntity: RecipesEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.insertRecipes(recipesEntity)
         }
     }
 

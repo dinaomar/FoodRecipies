@@ -36,6 +36,12 @@ android {
     }
 }
 
+ext {
+    roomVersion = "2.3.0"
+    lifecycle_version = "2.2.0"
+
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.6.0'
@@ -51,6 +57,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
 
     // shimmer recycler view
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
@@ -69,6 +77,15 @@ dependencies {
     // koil image library
     implementation("io.coil-kt:coil:1.4.0")
 
+    // room database
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$roomVersion")
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$roomVersion")
 
 
     testImplementation 'junit:junit:4.+'
