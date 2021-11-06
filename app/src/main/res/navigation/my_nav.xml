@@ -9,7 +9,15 @@
         android:id="@+id/recipesFragment"
         android:name="com.dina.elcg.myreciepes.ui.fragments.recipeis.RecipesFragment"
         android:label="Recipes"
-        tools:layout="@layout/fragment_recipes" />
+        tools:layout="@layout/fragment_recipes" >
+        <action
+            android:id="@+id/action_recipesFragment_to_bottomSheetFragment2"
+            app:destination="@id/bottomSheetFragment2" />
+        <argument
+            android:name="backFromBottomSheet"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.dina.elcg.myreciepes.ui.fragments.favorities.FavoritesFragment"
@@ -20,4 +28,13 @@
         android:name="com.dina.elcg.myreciepes.ui.fragments.jokes.JokeFragment"
         android:label="Joke"
         tools:layout="@layout/fragment_joke" />
+    <dialog
+        android:id="@+id/bottomSheetFragment2"
+        android:name="com.dina.elcg.myreciepes.ui.fragments.recipeis.bottomsheet.BottomSheetFragment"
+        android:label="fragment_bottom_sheet"
+        tools:layout="@layout/fragment_bottom_sheet" >
+        <action
+            android:id="@+id/action_bottomSheetFragment2_to_recipesFragment"
+            app:destination="@id/recipesFragment" />
+    </dialog>
 </navigation>
